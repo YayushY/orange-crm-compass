@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,7 +9,6 @@ import { MetricCard } from "./MetricCard";
 import { 
   Users, 
   FileText, 
-  Receipt, 
   UserX, 
   Target, 
   Phone,
@@ -204,7 +202,7 @@ export function Dashboard() {
             Monthly Performance - {currentAgentData.name} ({months.find(m => m.value === selectedMonth)?.label})
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <MetricCard
               title="Leads Assigned"
               value={currentMonthData.leadsAssigned}
@@ -219,21 +217,6 @@ export function Dashboard() {
               color="green"
             />
             
-            <Card className="bg-white border-orange-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-orange-900">Invoices Sent</CardTitle>
-                <Receipt className="h-4 w-4 text-orange-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-orange-900">
-                  {currentMonthData.invoicesSent.count}
-                </div>
-                <p className="text-xs text-orange-600 mt-1">
-                  Total: ${currentMonthData.invoicesSent.totalAmount.toLocaleString()}
-                </p>
-              </CardContent>
-            </Card>
-            
             <MetricCard
               title="Unused Leads"
               value={currentMonthData.unusedLeads}
@@ -241,7 +224,7 @@ export function Dashboard() {
               color="red"
             />
             
-            <Card className="bg-white border-orange-200 lg:col-span-2">
+            <Card className="bg-white border-orange-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-orange-900">Monthly Target</CardTitle>
                 <Target className={`h-4 w-4 ${targetAchieved ? 'text-green-600' : 'text-red-600'}`} />
@@ -270,6 +253,17 @@ export function Dashboard() {
                   <div className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     <span>{daysLeft} days left</span>
+                  </div>
+                </div>
+                <div className="mt-3 p-3 bg-orange-50 rounded-lg">
+                  <div className="text-sm text-orange-700 mb-1">Invoices Sent This Month</div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-semibold text-orange-900">
+                      {currentMonthData.invoicesSent.count}
+                    </span>
+                    <span className="text-sm text-orange-600">
+                      Total: ${currentMonthData.invoicesSent.totalAmount.toLocaleString()}
+                    </span>
                   </div>
                 </div>
               </CardContent>
