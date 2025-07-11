@@ -1,22 +1,21 @@
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Phone, Mail, Clock } from "lucide-react";
+import { Phone, Clock } from "lucide-react";
 
 interface FollowUpTableProps {
   agentName: string;
 }
 
-// Sample follow-up data
+// Sample follow-up data with follow-up times
 const followUpData = [
   {
     id: 1,
     customerName: "John Smith",
     company: "Tech Solutions Inc",
     lastContact: "2024-01-08",
-    priority: "High",
+    followUpTime: "10:30 AM",
     reason: "Proposal Discussion",
     phone: "+1 (555) 123-4567",
     email: "john@techsolutions.com"
@@ -26,7 +25,7 @@ const followUpData = [
     customerName: "Maria Garcia",
     company: "Digital Marketing Co",
     lastContact: "2024-01-07",
-    priority: "Medium",
+    followUpTime: "2:15 PM",
     reason: "Contract Terms",
     phone: "+1 (555) 234-5678",
     email: "maria@digitalmarketing.com"
@@ -36,7 +35,7 @@ const followUpData = [
     customerName: "David Wilson",
     company: "Innovation Labs",
     lastContact: "2024-01-06",
-    priority: "High",
+    followUpTime: "11:00 AM",
     reason: "Budget Approval",
     phone: "+1 (555) 345-6789",
     email: "david@innovationlabs.com"
@@ -46,18 +45,12 @@ const followUpData = [
     customerName: "Sarah Brown",
     company: "Growth Ventures",
     lastContact: "2024-01-05",
-    priority: "Low",
+    followUpTime: "3:45 PM",
     reason: "Service Inquiry",
     phone: "+1 (555) 456-7890",
     email: "sarah@growthventures.com"
   }
 ];
-
-const priorityColors = {
-  High: "bg-red-100 text-red-800 border-red-200",
-  Medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
-  Low: "bg-green-100 text-green-800 border-green-200"
-};
 
 export function FollowUpTable({ agentName }: FollowUpTableProps) {
   return (
@@ -76,7 +69,7 @@ export function FollowUpTable({ agentName }: FollowUpTableProps) {
                 <TableHead className="text-orange-900">Customer</TableHead>
                 <TableHead className="text-orange-900">Company</TableHead>
                 <TableHead className="text-orange-900">Last Contact</TableHead>
-                <TableHead className="text-orange-900">Priority</TableHead>
+                <TableHead className="text-orange-900">Follow-up Time</TableHead>
                 <TableHead className="text-orange-900">Reason</TableHead>
                 <TableHead className="text-orange-900">Actions</TableHead>
               </TableRow>
@@ -93,36 +86,21 @@ export function FollowUpTable({ agentName }: FollowUpTableProps) {
                   <TableCell className="text-orange-600">
                     {new Date(customer.lastContact).toLocaleDateString()}
                   </TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant="outline" 
-                      className={priorityColors[customer.priority as keyof typeof priorityColors]}
-                    >
-                      {customer.priority}
-                    </Badge>
+                  <TableCell className="text-orange-700 font-medium">
+                    {customer.followUpTime}
                   </TableCell>
                   <TableCell className="text-orange-700">
                     {customer.reason}
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="border-orange-200 text-orange-700 hover:bg-orange-50"
-                      >
-                        <Phone className="w-4 h-4 mr-1" />
-                        Call
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="border-orange-200 text-orange-700 hover:bg-orange-50"
-                      >
-                        <Mail className="w-4 h-4 mr-1" />
-                        Email
-                      </Button>
-                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-orange-200 text-orange-700 hover:bg-orange-50"
+                    >
+                      <Phone className="w-4 h-4 mr-1" />
+                      Call
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
