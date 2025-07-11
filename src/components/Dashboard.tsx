@@ -204,12 +204,20 @@ export function Dashboard() {
             Monthly Performance - {currentAgentData.name} ({months.find(m => m.value === selectedMonth)?.label})
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* First row: Four main metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <MetricCard
               title="Leads Assigned"
               value={currentMonthData.leadsAssigned}
               icon={Users}
               color="blue"
+            />
+            
+            <MetricCard
+              title="Unused Leads"
+              value={currentMonthData.unusedLeads}
+              icon={UserX}
+              color="red"
             />
             
             <MetricCard
@@ -233,15 +241,11 @@ export function Dashboard() {
                 </p>
               </CardContent>
             </Card>
-            
-            <MetricCard
-              title="Unused Leads"
-              value={currentMonthData.unusedLeads}
-              icon={UserX}
-              color="red"
-            />
-            
-            <Card className="bg-white border-orange-200 lg:col-span-2">
+          </div>
+
+          {/* Second row: Monthly Target only */}
+          <div className="grid grid-cols-1">
+            <Card className="bg-white border-orange-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-orange-900">Monthly Target</CardTitle>
                 <Target className={`h-4 w-4 ${targetAchieved ? 'text-green-600' : 'text-red-600'}`} />
