@@ -24,16 +24,17 @@ const navigationItems = [
 ];
 
 export function AppSidebar() {
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   return (
-    <Sidebar className={`${collapsed ? "w-14" : "w-64"} border-r border-orange-200`}>
+    <Sidebar className={`${isCollapsed ? "w-14" : "w-64"} border-r border-orange-200`}>
       <SidebarHeader className="border-b border-orange-200 p-4">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
             <BarChart3 className="w-5 h-5 text-white" />
           </div>
-          {!collapsed && (
+          {!isCollapsed && (
             <div>
               <h2 className="font-bold text-lg text-orange-900">CRM Pro</h2>
               <p className="text-sm text-orange-600">Sales Dashboard</p>
@@ -61,7 +62,7 @@ export function AppSidebar() {
                       }
                     >
                       <item.icon className="w-5 h-5" />
-                      {!collapsed && <span>{item.title}</span>}
+                      {!isCollapsed && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
