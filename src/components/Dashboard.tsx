@@ -17,7 +17,8 @@ import {
   Target, 
   Phone,
   TrendingUp,
-  Calendar
+  Calendar,
+  MapPin
 } from "lucide-react";
 
 // Sample data for agents with monthly data
@@ -49,7 +50,8 @@ const agentsData = {
         target: { achieved: 135000, target: 125000 }
       }
     },
-    todaysFollowUps: 8
+    todaysFollowUps: 8,
+    todaysOfficeVisits: 3
   },
   "mike-chen": {
     name: "Mike Chen",
@@ -77,7 +79,8 @@ const agentsData = {
         target: { achieved: 105000, target: 115000 }
       }
     },
-    todaysFollowUps: 12
+    todaysFollowUps: 12,
+    todaysOfficeVisits: 2
   },
   "emily-davis": {
     name: "Emily Davis",
@@ -106,7 +109,8 @@ const agentsData = {
         target: { achieved: 190000, target: 155000 }
       }
     },
-    todaysFollowUps: 6
+    todaysFollowUps: 6,
+    todaysOfficeVisits: 4
   },
   "alex-rodriguez": {
     name: "Alex Rodriguez",
@@ -134,7 +138,8 @@ const agentsData = {
         target: { achieved: 75000, target: 102000 }
       }
     },
-    todaysFollowUps: 15
+    todaysFollowUps: 15,
+    todaysOfficeVisits: 1
   },
   "david-smith": {
     name: "David Smith",
@@ -162,7 +167,8 @@ const agentsData = {
         target: { achieved: 95000, target: 98000 }
       }
     },
-    todaysFollowUps: 9
+    todaysFollowUps: 9,
+    todaysOfficeVisits: 2
   }
 };
 
@@ -419,7 +425,7 @@ export function Dashboard() {
             Today's Activities
           </h2>
           
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             <Card className="bg-white border-orange-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-orange-900">Follow-ups Today</CardTitle>
@@ -431,6 +437,21 @@ export function Dashboard() {
                 </div>
                 <p className="text-xs text-orange-600">
                   Pending customer calls
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white border-orange-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-orange-900">Office Visits Today</CardTitle>
+                <MapPin className="h-4 w-4 text-orange-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-orange-900">
+                  {currentAgentData.todaysOfficeVisits}
+                </div>
+                <p className="text-xs text-orange-600">
+                  Scheduled client visits
                 </p>
               </CardContent>
             </Card>
