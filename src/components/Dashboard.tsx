@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { FollowUpTable } from "./FollowUpTable";
 import { OfficeVisitTable } from "./OfficeVisitTable";
 import { MetricCard } from "./MetricCard";
@@ -337,38 +338,76 @@ export function Dashboard() {
             </Card>
 
             {isTeamLead && (
-              <Card className="bg-white border-orange-200">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-orange-900">Team Monthly Target</CardTitle>
-                  <Target className={`h-4 w-4 ${teamTargetAchieved ? 'text-green-600' : 'text-red-600'}`} />
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="text-2xl font-bold text-orange-900">
-                      ${teamTotals.achieved.toLocaleString()}
-                    </div>
-                    <Badge 
-                      variant={teamTargetAchieved ? "default" : "destructive"}
-                      className={teamTargetAchieved ? "bg-green-500" : ""}
-                    >
-                      {teamTargetAchieved ? "Target Achieved" : "Below Target"}
-                    </Badge>
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <Card className="bg-white border-orange-200 cursor-pointer transition-transform duration-200 hover:scale-105">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium text-orange-900">Team Monthly Target</CardTitle>
+                      <Target className={`h-4 w-4 ${teamTargetAchieved ? 'text-green-600' : 'text-red-600'}`} />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-2xl font-bold text-orange-900">
+                          ${teamTotals.achieved.toLocaleString()}
+                        </div>
+                        <Badge 
+                          variant={teamTargetAchieved ? "default" : "destructive"}
+                          className={teamTargetAchieved ? "bg-green-500" : ""}
+                        >
+                          {teamTargetAchieved ? "Target Achieved" : "Below Target"}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-orange-600 mb-2">
+                        Target: ${teamTotals.target.toLocaleString()} • Team: {teamData.length} members
+                      </div>
+                      <Progress 
+                        value={Math.min(teamAchievementPercentage, 100)} 
+                        className="h-2 mb-2"
+                      />
+                      <div className="flex items-center justify-between text-xs text-orange-600">
+                        <span>{teamAchievementPercentage.toFixed(1)}% of target achieved</span>
+                        <div className="text-xs">
+                          L: {teamTotals.leadsAssigned} • P: {teamTotals.proposalsSent} • I: {teamTotals.invoicesSent}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-80 animate-fade-in">
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-semibold text-orange-900 mb-3">Individual Team Performance</h4>
+                    {teamData.map((member, index) => {
+                      const memberAchievementPercentage = (member.data.target.achieved / member.data.target.target) * 100;
+                      const memberTargetAchieved = member.data.target.achieved >= member.data.target.target;
+                      
+                      return (
+                        <div key={index} className="space-y-2 p-3 bg-orange-50 rounded-lg">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-orange-900">{member.name}</span>
+                            <Badge 
+                              variant={memberTargetAchieved ? "default" : "secondary"}
+                              className={`text-xs ${memberTargetAchieved ? "bg-green-500" : "bg-orange-200 text-orange-800"}`}
+                            >
+                              {memberTargetAchieved ? "✓" : "Pending"}
+                            </Badge>
+                          </div>
+                          <div className="text-xs text-orange-600">
+                            ${member.data.target.achieved.toLocaleString()} / ${member.data.target.target.toLocaleString()}
+                          </div>
+                          <Progress 
+                            value={Math.min(memberAchievementPercentage, 100)} 
+                            className="h-1"
+                          />
+                          <div className="flex justify-between text-xs text-orange-600">
+                            <span>{memberAchievementPercentage.toFixed(1)}%</span>
+                            <span>L:{member.data.leadsAssigned} P:{member.data.proposalsSent} I:{member.data.invoicesSent.count}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                  <div className="text-xs text-orange-600 mb-2">
-                    Target: ${teamTotals.target.toLocaleString()} • Team: {teamData.length} members
-                  </div>
-                  <Progress 
-                    value={Math.min(teamAchievementPercentage, 100)} 
-                    className="h-2 mb-2"
-                  />
-                  <div className="flex items-center justify-between text-xs text-orange-600">
-                    <span>{teamAchievementPercentage.toFixed(1)}% of target achieved</span>
-                    <div className="text-xs">
-                      L: {teamTotals.leadsAssigned} • P: {teamTotals.proposalsSent} • I: {teamTotals.invoicesSent}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                </HoverCardContent>
+              </HoverCard>
             )}
           </div>
         </div>
