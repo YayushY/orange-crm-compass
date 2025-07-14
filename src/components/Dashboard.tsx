@@ -6,6 +6,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { FollowUpTable } from "./FollowUpTable";
+import { OfficeVisitTable } from "./OfficeVisitTable";
 import { MetricCard } from "./MetricCard";
 import { 
   Users, 
@@ -304,8 +305,9 @@ export function Dashboard() {
               </CardContent>
             </Card>
             
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-3 space-y-6">
               <FollowUpTable agentName={currentAgentData.name} />
+              <OfficeVisitTable agentName={currentAgentData.name} />
             </div>
           </div>
         </div>
