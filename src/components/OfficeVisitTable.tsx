@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MapPin, Clock } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 
 interface OfficeVisitTableProps {
   agentName: string;
@@ -13,28 +13,25 @@ const officeVisitData = [
     id: 1,
     customerName: "Robert Johnson",
     company: "Enterprise Solutions",
-    visitTime: "9:00 AM",
-    address: "123 Business Park, Suite 200",
-    purpose: "Product Demo",
-    status: "Confirmed"
+    lastContact: "2024-01-08",
+    note: "Product Demo",
+    phone: "+1 (555) 789-0123"
   },
   {
     id: 2,
     customerName: "Lisa Anderson",
     company: "Global Tech Corp",
-    visitTime: "1:30 PM",
-    address: "456 Corporate Blvd, Floor 15",
-    purpose: "Contract Signing",
-    status: "Confirmed"
+    lastContact: "2024-01-07",
+    note: "Contract Signing",
+    phone: "+1 (555) 890-1234"
   },
   {
     id: 3,
     customerName: "Michael Chen",
     company: "Startup Hub",
-    visitTime: "4:00 PM",
-    address: "789 Innovation Center",
-    purpose: "Consultation",
-    status: "Pending"
+    lastContact: "2024-01-06",
+    note: "Consultation",
+    phone: "+1 (555) 901-2345"
   }
 ];
 
@@ -54,9 +51,8 @@ export function OfficeVisitTable({ agentName }: OfficeVisitTableProps) {
               <TableRow className="border-orange-200">
                 <TableHead className="text-orange-900">Customer</TableHead>
                 <TableHead className="text-orange-900">Company</TableHead>
-                <TableHead className="text-orange-900">Visit Time</TableHead>
-                <TableHead className="text-orange-900">Address</TableHead>
-                <TableHead className="text-orange-900">Purpose</TableHead>
+                <TableHead className="text-orange-900">Last Contact Date</TableHead>
+                <TableHead className="text-orange-900">Note</TableHead>
                 <TableHead className="text-orange-900">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -69,14 +65,11 @@ export function OfficeVisitTable({ agentName }: OfficeVisitTableProps) {
                   <TableCell className="text-orange-700">
                     {visit.company}
                   </TableCell>
-                  <TableCell className="text-orange-700 font-medium">
-                    {visit.visitTime}
-                  </TableCell>
                   <TableCell className="text-orange-600">
-                    {visit.address}
+                    {new Date(visit.lastContact).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-orange-700">
-                    {visit.purpose}
+                    {visit.note}
                   </TableCell>
                   <TableCell>
                     <Button
@@ -84,8 +77,8 @@ export function OfficeVisitTable({ agentName }: OfficeVisitTableProps) {
                       variant="outline"
                       className="border-orange-200 text-orange-700 hover:bg-orange-50"
                     >
-                      <MapPin className="w-4 h-4 mr-1" />
-                      Navigate
+                      <Phone className="w-4 h-4 mr-1" />
+                      Call
                     </Button>
                   </TableCell>
                 </TableRow>

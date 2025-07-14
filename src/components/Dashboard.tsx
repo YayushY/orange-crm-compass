@@ -23,6 +23,8 @@ import {
 const agentsData = {
   "sarah-johnson": {
     name: "Sarah Johnson",
+    role: "Team Lead",
+    team: ["mike-chen", "alex-rodriguez"],
     monthlyData: {
       "2024-01": {
         leadsAssigned: 45,
@@ -50,6 +52,7 @@ const agentsData = {
   },
   "mike-chen": {
     name: "Mike Chen",
+    role: "Sales Agent",
     monthlyData: {
       "2024-01": {
         leadsAssigned: 38,
@@ -77,6 +80,8 @@ const agentsData = {
   },
   "emily-davis": {
     name: "Emily Davis",
+    role: "Team Lead",
+    team: ["david-smith"],
     monthlyData: {
       "2024-01": {
         leadsAssigned: 52,
@@ -104,6 +109,7 @@ const agentsData = {
   },
   "alex-rodriguez": {
     name: "Alex Rodriguez",
+    role: "Sales Agent",
     monthlyData: {
       "2024-01": {
         leadsAssigned: 29,
@@ -128,6 +134,34 @@ const agentsData = {
       }
     },
     todaysFollowUps: 15
+  },
+  "david-smith": {
+    name: "David Smith",
+    role: "Sales Agent",
+    monthlyData: {
+      "2024-01": {
+        leadsAssigned: 35,
+        proposalsSent: 25,
+        invoicesSent: { count: 12, totalAmount: 85000 },
+        unusedLeads: 10,
+        target: { achieved: 85000, target: 95000 }
+      },
+      "2024-02": {
+        leadsAssigned: 38,
+        proposalsSent: 28,
+        invoicesSent: { count: 15, totalAmount: 105000 },
+        unusedLeads: 10,
+        target: { achieved: 105000, target: 100000 }
+      },
+      "2024-03": {
+        leadsAssigned: 36,
+        proposalsSent: 26,
+        invoicesSent: { count: 13, totalAmount: 95000 },
+        unusedLeads: 10,
+        target: { achieved: 95000, target: 98000 }
+      }
+    },
+    todaysFollowUps: 9
   }
 };
 
@@ -153,8 +187,30 @@ export function Dashboard() {
   const currentAgentData = agentsData[selectedAgent as keyof typeof agentsData];
   const currentMonthData = currentAgentData.monthlyData[selectedMonth as keyof typeof currentAgentData.monthlyData];
   
+  // Calculate team performance if agent is team lead
+  const isTeamLead = currentAgentData.role === "Team Lead";
+  const teamData = isTeamLead && 'team' in currentAgentData && currentAgentData.team ? 
+    currentAgentData.team.map(memberId => {
+      const member = agentsData[memberId as keyof typeof agentsData];
+      return {
+        name: member.name,
+        data: member.monthlyData[selectedMonth as keyof typeof member.monthlyData]
+      };
+    }) : [];
+  
+  const teamTotals = teamData.reduce((acc, member) => ({
+    achieved: acc.achieved + member.data.target.achieved,
+    target: acc.target + member.data.target.target,
+    leadsAssigned: acc.leadsAssigned + member.data.leadsAssigned,
+    proposalsSent: acc.proposalsSent + member.data.proposalsSent,
+    invoicesSent: acc.invoicesSent + member.data.invoicesSent.count,
+    unusedLeads: acc.unusedLeads + member.data.unusedLeads
+  }), { achieved: 0, target: 0, leadsAssigned: 0, proposalsSent: 0, invoicesSent: 0, unusedLeads: 0 });
+
   const targetAchieved = currentMonthData.target.achieved >= currentMonthData.target.target;
   const achievementPercentage = (currentMonthData.target.achieved / currentMonthData.target.target) * 100;
+  const teamTargetAchieved = isTeamLead ? teamTotals.achieved >= teamTotals.target : false;
+  const teamAchievementPercentage = isTeamLead ? (teamTotals.achieved / teamTotals.target) * 100 : 0;
   const daysLeft = getDaysLeftInMonth();
 
   return (
@@ -244,11 +300,11 @@ export function Dashboard() {
             </Card>
           </div>
 
-          {/* Second row: Monthly Target only */}
-          <div className="grid grid-cols-1">
+          {/* Second row: Monthly Target */}
+          <div className={`grid ${isTeamLead ? 'grid-cols-2' : 'grid-cols-1'} gap-6`}>
             <Card className="bg-white border-orange-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-orange-900">Monthly Target</CardTitle>
+                <CardTitle className="text-sm font-medium text-orange-900">Personal Monthly Target</CardTitle>
                 <Target className={`h-4 w-4 ${targetAchieved ? 'text-green-600' : 'text-red-600'}`} />
               </CardHeader>
               <CardContent>
@@ -279,6 +335,41 @@ export function Dashboard() {
                 </div>
               </CardContent>
             </Card>
+
+            {isTeamLead && (
+              <Card className="bg-white border-orange-200">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-orange-900">Team Monthly Target</CardTitle>
+                  <Target className={`h-4 w-4 ${teamTargetAchieved ? 'text-green-600' : 'text-red-600'}`} />
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-2xl font-bold text-orange-900">
+                      ${teamTotals.achieved.toLocaleString()}
+                    </div>
+                    <Badge 
+                      variant={teamTargetAchieved ? "default" : "destructive"}
+                      className={teamTargetAchieved ? "bg-green-500" : ""}
+                    >
+                      {teamTargetAchieved ? "Target Achieved" : "Below Target"}
+                    </Badge>
+                  </div>
+                  <div className="text-xs text-orange-600 mb-2">
+                    Target: ${teamTotals.target.toLocaleString()} • Team: {teamData.length} members
+                  </div>
+                  <Progress 
+                    value={Math.min(teamAchievementPercentage, 100)} 
+                    className="h-2 mb-2"
+                  />
+                  <div className="flex items-center justify-between text-xs text-orange-600">
+                    <span>{teamAchievementPercentage.toFixed(1)}% of target achieved</span>
+                    <div className="text-xs">
+                      L: {teamTotals.leadsAssigned} • P: {teamTotals.proposalsSent} • I: {teamTotals.invoicesSent}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
 
