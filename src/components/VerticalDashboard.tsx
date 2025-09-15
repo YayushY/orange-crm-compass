@@ -144,9 +144,29 @@ const getStatusBadge = (status: string) => {
 
 export const VerticalDashboard = () => {
   const [selectedAgent, setSelectedAgent] = useState<string>("sarah-johnson");
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
   
   const currentAgentData = verticalData[selectedAgent as keyof typeof verticalData];
   const agentNames = Object.keys(verticalData);
+
+  const getFilteredProjects = (projects: any[], filter: string) => {
+    switch (filter) {
+      case "ongoing":
+        return projects.filter(p => p.status === "ongoing");
+      case "completed":
+        return projects.filter(p => p.status === "completed");
+      case "renewal-pending":
+        return projects.filter(p => p.status === "renewal-pending");
+      case "pending-approval":
+        return projects.filter(p => p.status === "pending-approval");
+      default:
+        return projects;
+    }
+  };
+
+  const handleMetricClick = (filterType: string) => {
+    setSelectedFilter(filterType);
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -183,36 +203,48 @@ export const VerticalDashboard = () => {
             {/* Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
               {/* Common metrics for all verticals */}
-              <Card className="bg-white border-orange-200">
+              <Card 
+                className="bg-white border-orange-200 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => handleMetricClick("ongoing")}
+              >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium text-orange-900">Ongoing Projects</CardTitle>
                   <FolderOpen className="h-4 w-4 text-orange-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-orange-900">{verticalData.metrics.ongoingProjects}</div>
+                  <p className="text-xs text-orange-600 mt-1">Click to view projects</p>
                 </CardContent>
               </Card>
 
-              <Card className="bg-white border-orange-200">
+              <Card 
+                className="bg-white border-orange-200 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => handleMetricClick("completed")}
+              >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium text-orange-900">Completed Projects</CardTitle>
                   <CheckCircle className="h-4 w-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-orange-900">{verticalData.metrics.completedProjects}</div>
+                  <p className="text-xs text-orange-600 mt-1">Click to view projects</p>
                 </CardContent>
               </Card>
 
               {/* Client Executive specific metrics */}
               {verticalKey === "client-executive" && (
                 <>
-                  <Card className="bg-white border-orange-200">
+                  <Card 
+                    className="bg-white border-orange-200 cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => handleMetricClick("renewal-pending")}
+                  >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium text-orange-900">Renewal Pending</CardTitle>
                       <Clock className="h-4 w-4 text-yellow-600" />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold text-orange-900">{verticalData.metrics.renewalPending}</div>
+                      <p className="text-xs text-orange-600 mt-1">Click to view projects</p>
                     </CardContent>
                   </Card>
 
@@ -271,13 +303,17 @@ export const VerticalDashboard = () => {
                     </CardContent>
                   </Card>
 
-                  <Card className="bg-white border-orange-200">
+                  <Card 
+                    className="bg-white border-orange-200 cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => handleMetricClick("pending-approval")}
+                  >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium text-orange-900">Pending Approval</CardTitle>
                       <Clock className="h-4 w-4 text-orange-600" />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold text-orange-900">{verticalData.metrics.tasksPendingApproval}</div>
+                      <p className="text-xs text-orange-600 mt-1">Click to view projects</p>
                     </CardContent>
                   </Card>
                 </>
@@ -285,13 +321,17 @@ export const VerticalDashboard = () => {
 
               {/* Website and Graphic specific metrics */}
               {(verticalKey === "website" || verticalKey === "graphic") && (
-                <Card className="bg-white border-orange-200">
+                <Card 
+                  className="bg-white border-orange-200 cursor-pointer hover:shadow-md transition-shadow"
+                  onClick={() => handleMetricClick("pending-approval")}
+                >
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-orange-900">Pending Approval</CardTitle>
                     <Clock className="h-4 w-4 text-orange-600" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-orange-900">{verticalData.metrics.tasksPendingApproval}</div>
+                    <p className="text-xs text-orange-600 mt-1">Click to view projects</p>
                   </CardContent>
                 </Card>
               )}
@@ -300,23 +340,44 @@ export const VerticalDashboard = () => {
             {/* Projects List */}
             <Card className="bg-white border-orange-200">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-orange-900">
-                  {verticalData.name} Projects
+                <CardTitle className="text-lg font-semibold text-orange-900 flex items-center justify-between">
+                  <span>
+                    {verticalData.name} Projects 
+                    {selectedFilter !== "all" && (
+                      <span className="text-sm font-normal text-orange-600 ml-2">
+                        ({selectedFilter.replace("-", " ")})
+                      </span>
+                    )}
+                  </span>
+                  {selectedFilter !== "all" && (
+                    <button 
+                      onClick={() => setSelectedFilter("all")}
+                      className="text-sm text-orange-600 hover:text-orange-800 underline"
+                    >
+                      Clear Filter
+                    </button>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {verticalData.projects.map((project) => (
-                    <div key={project.id} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-100">
-                      <div className="flex-1">
-                        <h4 className="font-medium text-orange-900">{project.name}</h4>
-                        <p className="text-sm text-orange-600">{project.type}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {getStatusBadge(project.status)}
-                      </div>
+                  {getFilteredProjects(verticalData.projects, selectedFilter).length === 0 ? (
+                    <div className="text-center py-8 text-orange-600">
+                      No projects found for the selected filter.
                     </div>
-                  ))}
+                  ) : (
+                    getFilteredProjects(verticalData.projects, selectedFilter).map((project) => (
+                      <div key={project.id} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-100">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-orange-900">{project.name}</h4>
+                          <p className="text-sm text-orange-600">{project.type}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {getStatusBadge(project.status)}
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </CardContent>
             </Card>
