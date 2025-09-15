@@ -6,9 +6,11 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FollowUpTable } from "./FollowUpTable";
 import { OfficeVisitTable } from "./OfficeVisitTable";
 import { MetricCard } from "./MetricCard";
+import { VerticalDashboard } from "./VerticalDashboard";
 import { 
   Users, 
   FileText, 
@@ -18,7 +20,8 @@ import {
   Phone,
   TrendingUp,
   Calendar,
-  MapPin
+  MapPin,
+  BarChart3
 } from "lucide-react";
 
 // Sample data for agents with monthly data
@@ -191,6 +194,7 @@ const getDaysLeftInMonth = () => {
 export function Dashboard() {
   const [selectedAgent, setSelectedAgent] = useState("sarah-johnson");
   const [selectedMonth, setSelectedMonth] = useState("2024-03");
+  const [activeTab, setActiveTab] = useState("main");
   const currentAgentData = agentsData[selectedAgent as keyof typeof agentsData];
   const currentMonthData = currentAgentData.monthlyData[selectedMonth as keyof typeof currentAgentData.monthlyData];
   
@@ -221,12 +225,34 @@ export function Dashboard() {
   const daysLeft = getDaysLeftInMonth();
 
   return (
-    <div className="flex-1 bg-orange-50 min-h-screen">
-      <header className="bg-white border-b border-orange-200 p-4">
+    <div className="min-h-screen bg-orange-50">
+      <header className="bg-white border-b border-orange-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <SidebarTrigger className="text-orange-700" />
-            <h1 className="text-2xl font-bold text-orange-900">Sales Dashboard</h1>
+            <SidebarTrigger className="text-orange-600 hover:text-orange-700" />
+            <h1 className="text-2xl font-bold text-orange-900">Dashboard</h1>
+          </div>
+        </div>
+      </header>
+
+      <div className="p-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="main" className="flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              Main Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="verticals" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Vertical Metrics
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="main" className="space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-orange-900">Sales Dashboard</h1>
+            <p className="text-orange-700 mt-1">Monitor performance and track monthly targets</p>
           </div>
           <div className="flex items-center gap-4">
             <Select value={selectedAgent} onValueChange={setSelectedAgent}>
@@ -258,9 +284,6 @@ export function Dashboard() {
             </Badge>
           </div>
         </div>
-      </header>
-
-      <div className="p-6 space-y-8">
         {/* Monthly Metrics Section */}
         <div>
           <h2 className="text-xl font-semibold text-orange-900 mb-4 flex items-center gap-2">
@@ -462,6 +485,12 @@ export function Dashboard() {
             </div>
           </div>
         </div>
+          </TabsContent>
+
+          <TabsContent value="verticals">
+            <VerticalDashboard />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
